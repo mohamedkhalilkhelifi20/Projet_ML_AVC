@@ -1,0 +1,4 @@
+scenario,version,model,accuracy,f1_macro
+Meilleur V1 (leakage — référence),V1,LogisticRegression,0.9992,0.9982
+Meilleur V2 (baseline honnête),V2,DecisionTree,0.5857,0.5422
+V2 RF optimisée (GridSearch),V2,RandomForest_GridSearch,0.6192,0.552

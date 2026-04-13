@@ -1,0 +1,50 @@
+{
+  "target": "severity_class",
+  "num_vars": [
+    "RDELAY",
+    "AGE",
+    "RSBP"
+  ],
+  "cat_vars": [
+    "RCONSC",
+    "SEX",
+    "RSLEEP",
+    "RATRIAL",
+    "RCT",
+    "RVISINF",
+    "RHEP24",
+    "RASP3",
+    "RDEF1",
+    "RDEF2",
+    "RDEF3",
+    "RDEF4",
+    "RDEF5",
+    "RDEF6",
+    "RDEF7",
+    "RDEF8",
+    "STYPE"
+  ],
+  "all_features": [
+    "RDELAY",
+    "AGE",
+    "RSBP",
+    "RCONSC",
+    "SEX",
+    "RSLEEP",
+    "RATRIAL",
+    "RCT",
+    "RVISINF",
+    "RHEP24",
+    "RASP3",
+    "RDEF1",
+    "RDEF2",
+    "RDEF3",
+    "RDEF4",
+    "RDEF5",
+    "RDEF6",
+    "RDEF7",
+    "RDEF8",
+    "STYPE"
+  ],
+  "n_features": 20
+}

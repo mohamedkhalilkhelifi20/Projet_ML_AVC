@@ -1,0 +1,34 @@
+{
+  "version": "V2",
+  "best_model": "LogisticRegression",
+  "best_params": {
+    "model__C": 0.01,
+    "model__max_iter": 500,
+    "model__solver": "saga"
+  },
+  "cv_recall_macro": 0.8709,
+  "test_recall_severe": 0.862,
+  "test_recall_macro": 0.8508,
+  "test_f1_macro": 0.7895,
+  "test_accuracy": 0.8545,
+  "n_models_tested": 5,
+  "scoring_principal": "recall_macro",
+  "corrections_v2": [
+    "RSBP=0 remplace par NaN avant imputation",
+    "C dans RDEF encode 0.5 + indicateur uncertain",
+    "StandardScaler dans pipeline numerique",
+    "AGE et RSBP conserves (retrait V1 etait incorrect)",
+    "SMOTE applique uniquement sur X_train",
+    "Feature Engineering : n_deficits_confirmed, n_deficits_uncertain, deficit_ratio",
+    "XGBoost ajoute",
+    "GridSearch sur tous les modeles (scoring=recall_macro)",
+    "Courbe ROC multiclasse",
+    "Heatmap metriques"
+  ],
+  "next_steps_v3": [
+    "SHAP values",
+    "Threshold adjustment sur classe severe",
+    "Calibration des probabilites",
+    "Interface Streamlit"
+  ]
+}

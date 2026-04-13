@@ -1,0 +1,38 @@
+{
+  "version": "V1",
+  "best_model": "RandomForest_GridSearchCV",
+  "best_params": {
+    "model__max_depth": null,
+    "model__min_samples_leaf": 5,
+    "model__n_estimators": 200
+  },
+  "cv_score_train": 0.554,
+  "test_accuracy": 0.6192,
+  "test_f1_macro": 0.552,
+  "test_recall_severe": 0.5215,
+  "n_models_tested": 4,
+  "models_tested": [
+    "LogisticRegression",
+    "DecisionTree",
+    "RandomForest",
+    "GradientBoosting"
+  ],
+  "versions_tested": [
+    "V1",
+    "V2"
+  ],
+  "cv_folds": 5,
+  "scoring": "f1_macro",
+  "class_order": [
+    "leger",
+    "modere",
+    "severe"
+  ],
+  "notes": [
+    "V1 d\u00e9montre le leakage structurel (RCONSC + RDEF dans features)",
+    "V2 est la version m\u00e9thodologiquement correcte",
+    "SMOTE absent en V1 \u2192 am\u00e9lioration pr\u00e9vue en V2",
+    "XGBoost absent en V1 \u2192 ajout pr\u00e9vu en V2",
+    "SHAP values absent en V1 \u2192 ajout pr\u00e9vu en V3"
+  ]
+}

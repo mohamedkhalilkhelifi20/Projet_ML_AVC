@@ -1,0 +1,12 @@
+{
+  "selected_version": "V2",
+  "best_model_name_v2": "LogisticRegression",
+  "rf_optimized_best_params": {
+    "max_depth": null,
+    "min_samples_leaf": 3,
+    "n_estimators": 100
+  },
+  "rf_optimized_cv_f1_macro": 0.809047369445393,
+  "rf_optimized_test_accuracy": 0.8704943357363543,
+  "rf_optimized_test_f1_macro": 0.8010259127696674
+}
