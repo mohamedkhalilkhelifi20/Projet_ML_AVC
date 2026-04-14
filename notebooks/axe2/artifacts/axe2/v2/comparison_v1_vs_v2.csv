@@ -1,0 +1,4 @@
+scenario,version,recall_severe,recall_macro,f1_macro,accuracy
+V1 — meilleur modele baseline,V1,0.72,,0.5422,0.5857
+V2 baseline — LogisticRegression,V2,0.865,0.8533,0.7926,0.8568
+V2 GridSearch — LogisticRegression,V2,0.862,0.8508,0.7895,0.8545

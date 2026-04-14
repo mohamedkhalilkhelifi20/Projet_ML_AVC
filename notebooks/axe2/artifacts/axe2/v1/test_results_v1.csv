@@ -1,0 +1,9 @@
+version,model,accuracy,f1_macro
+V1,LogisticRegression,0.9992,0.9982
+V1,GradientBoosting,0.9949,0.9911
+V1,RandomForest,0.9856,0.9774
+V1,DecisionTree,0.9367,0.921
+V2,DecisionTree,0.5857,0.5422
+V2,LogisticRegression,0.5675,0.5245
+V2,RandomForest,0.6535,0.5005
+V2,GradientBoosting,0.6934,0.4878
