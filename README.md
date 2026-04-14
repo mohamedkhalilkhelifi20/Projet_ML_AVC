@@ -1,179 +1,344 @@
 # 🧠 Axe 3 – Prédiction de la mortalité post-AVC
 
-## 📌 Table des matières
-
-1. [Introduction](#introduction)
-2. [Objectif](#objectif)
-3. [Données utilisées](#données-utilisées)
-4. [Prétraitement des données](#prétraitement-des-données)
-5. [Modélisation](#modélisation)
-6. [Modèles testés (versions précédentes)](#modèles-testés-versions-précédentes)
-7. [Optimisation des modèles](#optimisation-des-modèles)
-8. [Seuils de décision (Threshold tuning)](#seuils-de-décision-threshold-tuning)
-9. [Résultats](#résultats)
-10. [Modèle final retenu](#modèle-final-retenu)
-11. [Interprétabilité (SHAP)](#interprétabilité-shap)
-12. [Conclusion](#conclusion)
 
 ---
+
+
+## 📌 Table des matières
+
+
+1. Introduction  
+2. Objectif  
+3. Données utilisées  
+4. Prétraitement des données  
+5. Feature Engineering  
+6. Gestion du déséquilibre (SMOTE)  
+7. Modélisation  
+8. Modèles testés  
+9. Optimisation des modèles  
+10. Seuils de décision (Threshold tuning)  
+11. Résultats  
+12. Modèle final retenu  
+13. Interprétabilité (SHAP)  
+14. Conclusion  
+
+
+---
+
 
 ## 📖 Introduction
 
-Dans cet axe, nous développons des modèles de machine learning pour prédire la **mortalité après un AVC**, en nous basant sur des variables cliniques et biologiques.
 
-Deux cibles ont été étudiées :
+Dans cet axe, nous développons des modèles de machine learning pour prédire la **mortalité après un AVC**, à partir de données cliniques issues du dataset IST.
 
-* **DDEAD** : mortalité à court terme
-* **FDEAD** : mortalité à long terme
+
+Deux horizons de prédiction sont étudiés :
+
+
+- **DDEAD** : mortalité à court terme (14 jours)  
+- **FDEAD** : mortalité à long terme (6 mois)  
+
+
+👉 Il s’agit d’un problème de **classification binaire fortement déséquilibré**.
+
 
 ---
+
 
 ## 🎯 Objectif
 
+
 Construire des modèles capables de :
 
-* détecter au mieux les patients à risque
-* **maximiser le Recall** (priorité médicale)
-* fournir des résultats interprétables
+
+- détecter efficacement les patients à risque  
+- **maximiser le Recall (priorité médicale)**  
+- maintenir un compromis avec la précision  
+- fournir des résultats interprétables  
+
 
 ---
+
 
 ## 📊 Données utilisées
 
-Les données incluent :
 
-* variables cliniques
-* paramètres biologiques
-* informations démographiques
+Le dataset IST contient :
+
+
+- 19 435 patients  
+- 112 variables  
+
+
+Types de variables :
+
+
+- données démographiques (AGE, SEX)  
+- données cliniques (pression, état neurologique, traitements)  
+
 
 Variables cibles :
 
-* `DDEAD`
-* `FDEAD`
+
+- `DDEAD`  
+- `FDEAD`  
+
 
 ---
+
 
 ## ⚙️ Prétraitement des données
 
-* Nettoyage des valeurs manquantes
-* Encodage des variables catégorielles
-* Normalisation / standardisation
-* Séparation **train / test**
+
+Les principales étapes :
+
+
+- Nettoyage des valeurs manquantes  
+- Transformation des cibles (Y/N → 1/0)  
+- Imputation :
+  - médiane (variables numériques)
+  - mode (variables catégorielles)
+- Encodage des variables catégorielles (**One-Hot Encoding**)  
+- Séparation train/test (80/20) avec stratification  
+
+
+👉 Un **pipeline sklearn** a été utilisé pour garantir la reproductibilité et éviter le data leakage.
+
 
 ---
 
-## 🤖 Modélisation (Version finale)
 
-Les modèles retenus dans cette version finale :
+## 🧠 Feature Engineering
 
-| Modèle                              | Description                      |
-| ----------------------------------- | -------------------------------- |
-| Baseline Logistic Regression        | Modèle de référence              |
-| Logistic + Threshold tuning         | Ajustement du seuil              |
-| Logistic + GridSearchCV             | Optimisation des hyperparamètres |
-| Logistic + GridSearchCV + Threshold | ✅ Modèle final                   |
 
----
+Deux transformations importantes :
 
-## 🔁 Modèles testés (versions précédentes)
 
-Dans les versions antérieures de ce projet, plusieurs modèles ont été explorés :
+### 🔹 RDEF_SCORE
+- Agrégation des variables `RDEF1` à `RDEF8`
+- Représente le niveau de déficit neurologique
 
-| Modèle              | Statut | Observation                                  |
-| ------------------- | ------ | -------------------------------------------- |
-| Random Forest       | Testé  | Bonne performance mais moins interprétable   |
-| XGBoost             | Testé  | Performant mais plus complexe                |
-| Logistic Regression | Retenu | Bon compromis performance / interprétabilité |
 
-👉 **Choix final : Logistic Regression**
+### 🔹 RCONSC_NUM
+- Transformation du niveau de conscience en variable numérique
 
-* plus simple
-* plus interprétable (important en médical)
-* performances satisfaisantes après tuning
+
+👉 Objectif : introduire une information clinique synthétique et exploitable par le modèle.
+
 
 ---
 
-## 🔧 Optimisation des modèles
 
-* Utilisation de **GridSearchCV**
-* Validation croisée
-* Optimisation des hyperparamètres
+## ⚖️ Gestion du déséquilibre (SMOTE)
 
----
 
-## 🎚️ Seuils de décision (Threshold tuning)
+Le dataset présente un fort déséquilibre :
 
-Optimisation basée sur le **Recall** :
 
-* **DDEAD → seuil retenu = 0.20**
-* **FDEAD → seuil retenu = 0.25**
+- majorité : patients survivants  
+- minorité : patients décédés  
+
+
+### 🔧 Solution
+
+
+👉 Utilisation de **SMOTE** (Synthetic Minority Over-sampling Technique)
+
+
+- génération de données synthétiques  
+- appliqué uniquement sur le train  
+
 
 👉 Impact :
 
-* amélioration du Recall
-* meilleure détection des patients à risque
+
+- amélioration du Recall  
+- meilleure détection des cas critiques  
+
 
 ---
+
+
+## 🤖 Modélisation
+
+
+Plusieurs modèles ont été testés :
+
+
+- Logistic Regression  
+- Random Forest  
+- XGBoost  
+
+
+---
+
+
+## 🔁 Modèles testés
+
+
+| Modèle              | Observation |
+|---------------------|------------|
+| Random Forest       | Bonne performance globale mais Recall insuffisant pour la classe minoritaire |
+| XGBoost             | Modèle performant mais n’apporte pas d’amélioration significative sur le Recall dans ce contexte |
+| Logistic Regression | Meilleur compromis entre performance et interprétabilité après optimisation |
+
+
+👉 Le choix est basé sur les résultats expérimentaux et l’objectif médical.
+
+
+---
+
+
+## 🔧 Optimisation des modèles
+
+
+Les techniques suivantes ont été utilisées :
+
+
+- **GridSearchCV** pour le tuning des hyperparamètres  
+- **Validation croisée (Stratified K-Fold)**  
+- optimisation basée sur le Recall  
+
+
+👉 Permet d’obtenir un modèle robuste et stable.
+
+
+---
+
+
+## 🎚️ Seuils de décision (Threshold tuning)
+
+
+Le seuil par défaut (0.5) n’est pas adapté.
+
+
+### 🔥 Seuils optimaux retenus :
+
+
+- **DDEAD → 0.20**  
+- **FDEAD → 0.25**  
+
+
+👉 Impact :
+
+
+- augmentation significative du Recall  
+- meilleure détection des patients à risque  
+
+
+---
+
 
 ## 📈 Résultats
 
+
 Métriques utilisées :
 
-* Accuracy
-* Precision
-* Recall ⭐ (prioritaire)
-* F1-score
-* AUC-ROC
+
+- Accuracy  
+- Precision  
+- Recall ⭐  
+- F1-score  
+- AUC-ROC  
+
 
 ### 📊 Observations
 
-* Le tuning du seuil améliore significativement le Recall
-* Le modèle optimisé offre le meilleur compromis
-* Les performances sont cohérentes avec l’objectif clinique
+
+- SMOTE améliore la performance sur la classe minoritaire  
+- le threshold tuning améliore fortement le Recall  
+- les résultats sont cohérents avec l’objectif médical  
+
 
 ---
+
 
 ## 🏆 Modèle final retenu
 
+
 ### 🔹 DDEAD
 
-* Modèle : Logistic Regression + GridSearchCV + Threshold
-* Seuil : **0.20**
+
+- Logistic Regression + GridSearchCV + Threshold  
+- Seuil : **0.20**
+
+
+---
+
 
 ### 🔹 FDEAD
 
-* Modèle : Logistic Regression + GridSearchCV + Threshold
-* Seuil : **0.25**
 
-👉 Justification :
+- Logistic Regression + GridSearchCV + Threshold  
+- Seuil : **0.25**
 
-* priorité au Recall
-* modèle interprétable
-* performances robustes
 
 ---
+
+
+### ✅ Justification
+
+
+- priorité au Recall  
+- modèle interprétable  
+- pipeline structuré  
+- performances robustes  
+
+
+---
+
 
 ## 🔍 Interprétabilité (SHAP)
 
+
 Utilisation de **SHAP** pour :
 
-* analyser l’impact des variables
-* expliquer les prédictions
-* renforcer la confiance clinique
+
+- analyser l’impact des variables  
+- expliquer les prédictions  
+- renforcer la confiance dans le modèle  
+
+
+### 🔥 Variables importantes :
+
+
+- AGE  
+- RDEF_SCORE  
+- RCONSC  
+- RSBP  
+
 
 ---
+
 
 ## ✅ Conclusion
 
-* Le modèle permet une **détection efficace des patients à risque**
-* Le **threshold tuning est déterminant**
-* Le choix du modèle privilégie l’**interprétabilité médicale**
+
+- Le modèle permet une **détection efficace des patients à risque**  
+- Le pipeline est complet et reproductible  
+- Le **threshold tuning est l’amélioration clé**  
+
+
+👉 Le projet respecte les contraintes du domaine médical :
+
+
+- priorité au Recall  
+- interprétabilité  
+- robustesse  
+
 
 ---
+
 
 ## 🚀 Perspectives
 
-* Tester des modèles hybrides
-* Enrichir les données
+
+
+
+- modèles avancés (LightGBM)  
+- Tester des modèles hybrides
+- Enrichir les données
+
 
 ---
+
